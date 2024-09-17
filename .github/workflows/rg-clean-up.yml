@@ -1,0 +1,18 @@
+name: Azure Resource Group Cleanup
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Run Cleanup Script
+        run: |
+          az group list --query "[].name" -o tsv | xargs -L 1 az group delete --name --yes
