@@ -19,7 +19,7 @@ jobs:
 
       - name: List and delete resource groups
         run: |
-          rg_list = $(az group list --query "[?starts_with(name, 'vkuma344')].name" -o tsv)
+          rg_list=$(az group list --query "[?starts_with(name, 'vkuma344')].name" -o tsv)
           for rg_name in $rg_list; do
             echo "Deleting resource groups"
             az group delete --name $rg_name --yes --no-wait
