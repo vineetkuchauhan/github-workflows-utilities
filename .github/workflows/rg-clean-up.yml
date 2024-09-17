@@ -22,7 +22,7 @@ jobs:
         id: delete_groups
         run: |
           set -e
-          rg_list=$(az group list --query "[?starts_with(name, 'vkuma344')].name" -o tsv)
+          rg_list=$(az group list --query "[].name" -o tsv)
           if [ -z "$rg_list" ]; then
             echo "No resource groups found to delete." > summary.md
           else
