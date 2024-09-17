@@ -2,7 +2,8 @@ name: Azure Resource Group Cleanup
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Run daily at midnight
+    - cron: '0 * * * *'  # Run every hour
+  workflow_dispatch:
 
 jobs:
   cleanup:
