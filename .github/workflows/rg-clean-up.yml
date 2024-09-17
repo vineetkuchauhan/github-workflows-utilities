@@ -20,8 +20,20 @@ jobs:
       - name: List and delete resource groups
         run: |
           rg_list=$(az group list --query "[?starts_with(name, 'vkuma344')].name" -o tsv)
-          for rg_name in $rg_list; do
-            echo "Deleting resource groups"
-            az group delete --name $rg_name --yes --no-wait
-          done
+          if [ -z "$rg_list" ]; then
+            echo "No resource groups found to delete." > summary.md
+          else
+            echo "Deleted the following resource groups:" > summary.md
+            for rg_name in $rg_list; do
+              echo "Deleting resource group: $rg_name"
+              az group delete --name $rg_name --yes --no-wait
+              echo "- $rg_name" >> summary.md
+            done
+          fi
+          cat summary.md
+      - name: Print summary
+        if: always()
+        run: |
+          echo "## Resource Group Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          cat summary.md >> $GITHUB_STEP_SUMMARY
       
