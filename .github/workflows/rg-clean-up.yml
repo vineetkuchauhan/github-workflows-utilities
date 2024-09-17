@@ -14,11 +14,14 @@ jobs:
       - uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Set Azure subscription
         run: az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: List and delete resource groups
+        id: delete_groups
         run: |
+          set -e
           rg_list=$(az group list --query "[?starts_with(name, 'vkuma344')].name" -o tsv)
           if [ -z "$rg_list" ]; then
             echo "No resource groups found to delete." > summary.md
@@ -31,9 +34,14 @@ jobs:
             done
           fi
           cat summary.md
+          
       - name: Print summary
         if: always()
         run: |
           echo "## Resource Group Cleanup Summary" >> $GITHUB_STEP_SUMMARY
           cat summary.md >> $GITHUB_STEP_SUMMARY
+          
+      - name: Check for errors
+        if: failure()
+        run: echo "There was an error in the previous steps."
       
